@@ -1,4 +1,18 @@
-import type { MetaFunction } from "@remix-run/node";
+import { json, type MetaFunction } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { call } from "~/genai/langraph";
+
+export async function loader() {
+  const res = await call(
+    "What is/are available product(s) containing DS ingredient  microcrystalline cellulose?"
+  );
+  return json(
+    { message: res },
+    {
+      status: 200,
+    }
+  );
+}
 
 export const meta: MetaFunction = () => {
   return [
@@ -8,6 +22,7 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
+  const loaderData = useLoaderData<typeof loader>();
   return (
     <div className="font-sans p-4">
       <h1 className="text-3xl">Welcome to Remix</h1>
