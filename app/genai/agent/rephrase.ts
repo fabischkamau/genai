@@ -1,4 +1,4 @@
-import { getHistory } from "../history";
+import { getHistory } from "./history";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import {
   ChatPromptTemplate,
@@ -8,13 +8,12 @@ import {
 } from "@langchain/core/prompts";
 import { RunnableConfig, RunnableSequence } from "@langchain/core/runnables";
 import { AgentState } from "./constants";
-import { ChatOpenAI } from "@langchain/openai";
+import { llm } from "../llm";
 
 export const rephraseQuestion = async (
   data: AgentState,
   config?: RunnableConfig
 ) => {
-  const llm = new ChatOpenAI({ temperature: 0 });
   const history = await getHistory(config?.configurable?.sessionId, 5);
 
   const rephrase = ChatPromptTemplate.fromMessages([

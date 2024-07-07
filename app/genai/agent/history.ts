@@ -1,5 +1,5 @@
 import { AIMessage, BaseMessage, HumanMessage } from "@langchain/core/messages";
-import { initGraph } from "./graph";
+import { initGraph } from "../graph";
 
 type UnpersistedChatbotResponse = {
   input: string;
@@ -12,7 +12,7 @@ export type ChatbotResponse = UnpersistedChatbotResponse & {
   id: string;
 };
 
-//* tag::clear[]
+// tag::clear[]
 export async function clearHistory(sessionId: string): Promise<void> {
   const graph = await initGraph();
   await graph.query(
@@ -24,9 +24,9 @@ export async function clearHistory(sessionId: string): Promise<void> {
     "WRITE"
   );
 }
-//* end::clear[]
+// end::clear[]
 
-//* tag::get[]
+// tag::get[]
 export async function getHistory(
   sessionId: string | undefined,
   limit: number = 5
@@ -35,7 +35,7 @@ export async function getHistory(
     return [];
   }
 
-  //* tag::gettx[]
+  // tag::gettx[]
   const graph = await initGraph();
   const res = await graph.query<ChatbotResponse>(
     `
@@ -54,9 +54,9 @@ export async function getHistory(
     { sessionId },
     "READ"
   );
-  //* end::gettx[]
+  // end::gettx[]
 
-  //* tag::getreturn[]
+  // tag::getreturn[]
   const output: BaseMessage[] = [];
 
   if (res) {
@@ -67,11 +67,11 @@ export async function getHistory(
   }
 
   return output;
-  //* end::getreturn[]
+  // end::getreturn[]
 }
-//* end::get[]
+// end::get[]
 
-//* tag::save[]
+// tag::save[]
 /**
  * Save a question and response to the database
  *
@@ -153,10 +153,10 @@ export async function saveHistory(
     },
     "WRITE"
   );
-  //* end::savetx[]
+  // end::savetx[]
 
-  //* tag::savereturn[]
+  // tag::savereturn[]
   return res && res.length ? res[0].id : "";
   // end::savereturn[]
 }
-//* end::save[]
+// end::save[]

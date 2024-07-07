@@ -3,8 +3,8 @@ import { AgentState } from "./constants";
 import { StructuredOutputParser } from "@langchain/core/output_parsers";
 import { z } from "zod";
 import { PromptTemplate } from "@langchain/core/prompts";
-import { ChatOpenAI } from "@langchain/openai";
-import { NODE_DATABASE_QUERY, PRODUCTS_RETRIEVER } from "./constants";
+import { llm } from "../llm";
+import { NODE_CYPHER_RETRIEVER, NODE_PORDUCTS_SEARCH } from "./constants";
 
 export const router = async (data: AgentState, config?: RunnableConfig) => {
   const prompt = PromptTemplate.fromTemplate(`
@@ -12,19 +12,18 @@ export const router = async (data: AgentState, config?: RunnableConfig) => {
 
     Follow the rules below to come to your conclusion:
 
-    * If the question relates to the description  of a product and can be answered with
-    the contents of the product name or description, respond with "${PRODUCTS_RETRIEVER}"
-    * If the question relates to products, categories or brand or ingredients and can be answered by a database
-    query, respond with "${NODE_DATABASE_QUERY}".
+    * If the question relates to the description of a supplement or product and can be answered with
+    the contents of the supplements name or description, respond with "${NODE_PORDUCTS_SEARCH}"
+    * If the question relates to Ingredients, Categories, Brand or General Supplement and can be answered by a database
+    query, respond with "${NODE_CYPHER_RETRIEVER}".
+
     Question: {question}
 
     {format_instructions}
   `);
-  const llm = new ChatOpenAI({
-    openAIApiKey: process.env.OPENAI_API_KEY,
-  });
+
   const parser = StructuredOutputParser.fromZodSchema(
-    z.enum([PRODUCTS_RETRIEVER, NODE_DATABASE_QUERY])
+    z.enum([NODE_PORDUCTS_SEARCH, NODE_CYPHER_RETRIEVER])
   );
 
   const chain = prompt.pipe(llm).pipe(parser);
