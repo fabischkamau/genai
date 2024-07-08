@@ -14,7 +14,9 @@ export const rephraseQuestion = async (
   data: AgentState,
   config?: RunnableConfig
 ) => {
-  const history = await getHistory(config?.configurable?.sessionId, 5);
+  const history = await getHistory(config?.configurable?.sessionId, 100);
+
+  console.log({ history });
 
   const rephrase = ChatPromptTemplate.fromMessages([
     SystemMessagePromptTemplate.fromTemplate(`

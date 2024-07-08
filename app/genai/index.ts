@@ -14,13 +14,8 @@ import {
   NODE_PORDUCTS_SEARCH,
 } from "./agent/constants";
 import { initRetrievalChain } from "./agent/tools/products";
-import { cypherTool, initCypherQAChain } from "./agent/tools/cypher-retrevial";
-import {
-  ChatPromptTemplate,
-  HumanMessagePromptTemplate,
-  MessagesPlaceholder,
-  SystemMessagePromptTemplate,
-} from "@langchain/core/prompts";
+import { initCypherQAChain } from "./agent/tools/cypher-retrevial";
+import { saveHistory } from "./agent/history";
 
 const agentState: StateGraphArgs<AgentState>["channels"] = {
   input: null,
@@ -77,8 +72,8 @@ export async function buildLangGraphAgent() {
 
 export async function call(input: string, sessionId?: string) {
   const agent = await buildLangGraphAgent();
-
+  console.log(sessionId);
   const res = await agent.invoke({ input }, { configurable: { sessionId } });
-
+  await saveHistory(sessionId as string, input, res.output);
   return res.output;
 }

@@ -29,7 +29,7 @@ export async function clearHistory(sessionId: string): Promise<void> {
 // tag::get[]
 export async function getHistory(
   sessionId: string | undefined,
-  limit: number = 5
+  limit: number = 100
 ): Promise<BaseMessage[]> {
   if (!sessionId) {
     return [];
