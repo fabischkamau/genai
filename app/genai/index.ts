@@ -14,7 +14,7 @@ import {
   NODE_PORDUCTS_SEARCH,
 } from "./agent/constants";
 import { initRetrievalChain } from "./agent/tools/products";
-import { initCypherQAChain } from "./agent/tools/cypher-retrevial";
+import { cypherTool, initCypherQAChain } from "./agent/tools/cypher-retrevial";
 import { saveHistory } from "./agent/history";
 
 const agentState: StateGraphArgs<AgentState>["channels"] = {
@@ -57,11 +57,11 @@ export async function buildLangGraphAgent() {
 
     // 4. Call CypherQAChain
     .addNode(NODE_CYPHER_RETRIEVER, async (data: AgentState) => {
-      const output = await cypherChain.invoke({
-        query: data.input,
+      const output = await cypherTool().invoke({
+        input: data.input,
       });
 
-      return { output: output.result as string };
+      return { output: output as string };
     })
     .addEdge(NODE_CYPHER_RETRIEVER, END);
 
@@ -74,6 +74,6 @@ export async function call(input: string, sessionId?: string) {
   const agent = await buildLangGraphAgent();
   console.log(sessionId);
   const res = await agent.invoke({ input }, { configurable: { sessionId } });
-  await saveHistory(sessionId as string, input, res.output);
+  
   return res.output;
 }

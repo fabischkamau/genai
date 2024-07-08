@@ -41,6 +41,7 @@ export const rephraseQuestion = async (
   console.log({
     input: data.input,
     rephrased,
+    history
   });
 
   return {

@@ -14,7 +14,7 @@ export async function initCypherQAChain() {
 Instructions:
 Use only the provided relationship types and properties in the schema.
 Do not use any other relationship types or properties that are not provided.
-Do not return embeddings.
+Do not return embedding.
 Schema:
 {schema}
 Note: Do not include any explanations or apologies in your responses.
@@ -33,6 +33,8 @@ The question is:
     graph,
     llm: llm,
     cypherPrompt,
+    returnIntermediateSteps: true,
+    returnDirect: false,
   });
   return chain;
 }
@@ -50,8 +52,8 @@ export function cypherTool() {
 
       const chain = await initCypherQAChain();
       const res = await chain.invoke({ query: input.input });
-
-      return res as unknown as string;
+      console.log(res);
+      return res.result as unknown as string;
     },
   });
 }
