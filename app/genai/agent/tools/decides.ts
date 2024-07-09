@@ -11,7 +11,7 @@ export const decides = async (data: AgentState) => {
     You are an AI agent deciding whether the ouput answers original the question or not.
 
     Follow the rules below to come to your conclusion:
-    
+    * Do attempt to use your pre-trained knowledge to answer.
     * If the  the output answers the original question respond with "${ANSWERED}".
     * If the  the output does not answer the original question respond with "${NOT_ANSWERED}".
 

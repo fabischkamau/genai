@@ -8,14 +8,17 @@ import {
   Link,
   json,
   redirect,
+  useActionData,
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
 import { ChevronRight, Plus } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { CollapsibleMessage } from "~/components/collapsible-message";
 import { SkeletonCard } from "~/components/skeleton-card";
 import { Button, buttonVariants } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
+import { useToast } from "~/components/ui/use-toast";
 import { call } from "~/genai";
 import { initGraph } from "~/genai/graph";
 import Layout from "~/layout";
@@ -49,10 +52,13 @@ export async function action({ request, params }: ActionFunctionArgs) {
   if (typeof question !== "string") {
     return json({ error: "Invalid question" });
   }
-  const answer = await call(question, sessionId);
-  console.log(answer);
-  //  return { answer };
-  return { sessionId };
+  return await call(question, sessionId)
+    .then((answer) => {
+      return null;
+    })
+    .catch((error) => {
+      return { error: error };
+    });
 }
 
 export const meta: MetaFunction = () => {
@@ -66,6 +72,22 @@ export default function Index() {
   const loaderData = useLoaderData<typeof loader>();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const actionData = useActionData<typeof action>();
+  const { toast } = useToast();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (actionData?.error) {
+      () =>
+        toast({
+          title: "Uh oh! Something went wrong. Try Again!",
+          description: "There was a problem with your request.",
+        });
+    }
+    if (isSubmitting) {
+      formRef.current?.reset();
+    }
+  }, [actionData, isSubmitting]);
 
   return (
     <Layout>
@@ -82,7 +104,7 @@ export default function Index() {
           </div>
         ))}
         {isSubmitting && <SkeletonCard />}
-        <Form method="post" className="py-10">
+        <Form method="post" className="py-10" ref={formRef}>
           <div className="relative">
             <Textarea
               placeholder="Ask a question"

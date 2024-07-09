@@ -12,9 +12,11 @@ import {
   useNavigation,
 } from "@remix-run/react";
 import { ChevronRight } from "lucide-react";
+import { useEffect } from "react";
 import { SkeletonCard } from "~/components/skeleton-card";
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
+import { useToast } from "~/components/ui/use-toast";
 import { call } from "~/genai";
 import Layout from "~/layout";
 import { createSession } from "~/utils/historysession.server";
@@ -28,12 +30,13 @@ export async function action({ request }: ActionFunctionArgs) {
   if (typeof question !== "string") {
     return json({ error: "Invalid question" });
   }
-  const answer = await call(question, sessionId);
-  if (typeof answer === "string") {
-    return redirect(`/chat/${sessionId}`);
-  }
-  //  return { answer };
-  return { answer };
+  return await call(question, sessionId)
+    .then((answer) => {
+      return redirect(`/chat/${sessionId}`);
+    })
+    .catch((error) => {
+      return { error: error };
+    });
 }
 
 export const meta: MetaFunction = () => {
@@ -47,6 +50,18 @@ export default function Index() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const actionData = useActionData<typeof action>();
+  const {toast} = useToast();
+
+  useEffect(() => {
+    if (actionData?.error) {
+      () =>
+        toast({
+          title: "Uh oh! Something went wrong. Try Again!",
+          description: "There was a problem with your request.",
+        });
+    }
+  }, [actionData]);
+
   return (
     <Layout>
       {isSubmitting ? (
