@@ -9,7 +9,6 @@ export async function initCypherQAChain() {
   const graph = await initGraph();
 
   await graph.refreshSchema();
-  console.log("Cypher QAChain");
 
   const cypherTemplate = `Task:Generate Cypher statement to query a graph database.
 Instructions:
@@ -24,7 +23,7 @@ Do not include any text except the generated Cypher statement.
 Limit the maximum number of results to 10.
 Do not return embedding property.
 Include any extra information in your response.
-Include thumbnails to products or suppliments as extra information where applicable.
+
 
 
 The question is:

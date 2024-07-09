@@ -1,6 +1,6 @@
 import { END, START, StateGraph, StateGraphArgs } from "@langchain/langgraph";
 
-import { AgentState } from "./agent/constants";
+import { AgentState, NOT_ANSWERED } from "./agent/constants";
 import { rephraseQuestion } from "./agent/rephrase";
 import { router } from "./agent/router";
 import {
@@ -51,6 +51,7 @@ export async function buildLangGraphAgent() {
     .addNode(
       NODE_PORDUCTS_SEARCH,
       async (data: AgentState, config?: RunnableConfig) => {
+        console.log("Running Vector Retrevial Tool");
         const output = await productsSearchTool().invoke({
           input: data.input,
         });
@@ -61,7 +62,9 @@ export async function buildLangGraphAgent() {
           messages: [],
           rephrased: "",
         });
-        if (checkAnswer.answer === "no") {
+        console.log({ checkAnswer });
+        if (checkAnswer.answer === NOT_ANSWERED) {
+          console.log("Choosing Joke Tool");
           const newoutput = tellJoke(data);
           return newoutput;
         }
@@ -72,6 +75,7 @@ export async function buildLangGraphAgent() {
 
     // 4. Call CypherQAChain
     .addNode(NODE_CYPHER_RETRIEVER, async (data: AgentState) => {
+      console.log("Running Cypher Tool");
       const output = await cypherTool().invoke({
         input: data.input,
       });
@@ -82,7 +86,9 @@ export async function buildLangGraphAgent() {
         messages: [],
         rephrased: "",
       });
-      if (checkAnswer.answer === "no") {
+      console.log({ checkAnswer });
+      if (checkAnswer.answer === NOT_ANSWERED) {
+        console.log("Choosing Vector Tool");
         const output = await productsSearchTool().invoke({
           input: data.input,
         });
@@ -93,7 +99,8 @@ export async function buildLangGraphAgent() {
           messages: [],
           rephrased: "",
         });
-        if (checkAnswer.answer === "no") {
+        if (checkAnswer.answer === NOT_ANSWERED) {
+          console.log("Choosing Joke Tool");
           const newoutput = tellJoke(data);
           return newoutput;
         }

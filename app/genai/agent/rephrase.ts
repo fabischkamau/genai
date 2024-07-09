@@ -35,11 +35,10 @@ export const rephraseQuestion = async (
     history,
     input: data.input,
   });
-
+  
   console.log({
     input: data.input,
     rephrased,
-    history,
   });
 
   return {

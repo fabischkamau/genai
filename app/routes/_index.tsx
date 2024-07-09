@@ -4,7 +4,13 @@ import {
   LoaderFunctionArgs,
   type MetaFunction,
 } from "@remix-run/node";
-import { Form, redirect, useLoaderData, useNavigation } from "@remix-run/react";
+import {
+  Form,
+  redirect,
+  useActionData,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react";
 import { ChevronRight } from "lucide-react";
 import { SkeletonCard } from "~/components/skeleton-card";
 import { Button } from "~/components/ui/button";
@@ -24,12 +30,10 @@ export async function action({ request }: ActionFunctionArgs) {
   }
   const answer = await call(question, sessionId);
   if (typeof answer === "string") {
-    return redirect(`/chat/${sessionId}`, {
-      status: 200,
-    });
+    return redirect(`/chat/${sessionId}`);
   }
   //  return { answer };
-  return { sessionId };
+  return { answer };
 }
 
 export const meta: MetaFunction = () => {
@@ -42,6 +46,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const actionData = useActionData<typeof action>();
   return (
     <Layout>
       {isSubmitting ? (

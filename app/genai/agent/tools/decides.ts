@@ -3,27 +3,32 @@ import { StructuredOutputParser } from "@langchain/core/output_parsers";
 
 import { PromptTemplate } from "@langchain/core/prompts";
 import { llm } from "../../llm";
+import { z } from "zod";
+import { ANSWERED, NOT_ANSWERED } from "../constants";
 
 export const decides = async (data: AgentState) => {
-    console.log("Choosing another tool")
   const prompt = PromptTemplate.fromTemplate(`
-    You are an AI agent deciding whether the ouput answers the question or not.
+    You are an AI agent deciding whether the ouput answers original the question or not.
 
     Follow the rules below to come to your conclusion:
     
-    * Do these results answer the original question? Answer with the format provided.
+    * If the  the output answers the original question respond with "${ANSWERED}".
+    * If the  the output does not answer the original question respond with "${NOT_ANSWERED}".
 
 
     Question: {question}
 
-    Answer: {output}
+    Output: {output}
 
     {format_instructions}
   `);
 
-  const parser = StructuredOutputParser.fromNamesAndDescriptions({
-    answer: "should be yes or no answer",
-  });
+  const parser = StructuredOutputParser.fromZodSchema(
+    z.object({
+      answer: z.enum([ANSWERED, NOT_ANSWERED]),
+    })
+  );
+  console.log({ parser });
 
   const chain = prompt.pipe(llm).pipe(parser);
 
