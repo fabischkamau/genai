@@ -19,7 +19,7 @@ export const decides = async (data: AgentState) => {
     Question: {question}
 
     Output: {output}
-
+    Strictly follow the following formated instructions to answer:
     {format_instructions}
   `);
 
@@ -28,7 +28,6 @@ export const decides = async (data: AgentState) => {
       answer: z.enum([ANSWERED, NOT_ANSWERED]),
     })
   );
-  console.log({ parser });
 
   const chain = prompt.pipe(llm).pipe(parser);
 
