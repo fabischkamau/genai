@@ -18,10 +18,8 @@ export const rephraseQuestion = async (
 
   const rephrase = ChatPromptTemplate.fromMessages([
     SystemMessagePromptTemplate.fromTemplate(`
-        Use the following conversation history to rephrase the input
-        into a standalone question. Correct the grammar and spellings too.
+        Rephrase the input into a standalone question that can be answered with database query. Correct the grammar and spellings too.
       `),
-    new MessagesPlaceholder("history"),
     HumanMessagePromptTemplate.fromTemplate(`Input: {input}`),
   ]);
 
@@ -32,7 +30,6 @@ export const rephraseQuestion = async (
   ]);
 
   const rephrased = await rephraseChain.invoke({
-    history,
     input: data.input,
   });
 

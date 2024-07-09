@@ -3,6 +3,7 @@ import { Link } from "@remix-run/react";
 
 import { buttonVariants } from "./ui/button";
 import { cn } from "~/lib/utils";
+import { ModeToggle } from "./mode-toggle";
 
 export default function Navbar() {
   return (
@@ -22,6 +23,7 @@ export default function Navbar() {
               Login
             </Link>
           </div>
+          {/* {<ModeToggle />} */}
         </div>
       </div>
     </div>

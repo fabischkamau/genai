@@ -24,9 +24,11 @@ Do not include any text except the generated Cypher statement.
 Limit the maximum number of results to 10.
 Do not return embedding property.
 Include extra information about the nodes that may help an LLM provide a more informative answer, for example the release thumbnails, price, allergens or warnings.
+If your the question is about information of a supplement or a product always include thumbnails of the products in your answer.
+
 
 Fine Tuning:
-Use the following FULLTEXT SEARCH examples from the following  indexes "${INDEXES}":
+When perfoming string matching queries always  the following FULLTEXT SEARCH examples from the following indexes "${INDEXES}" to guide your answer:
 Example Cypher Statements:
  Example Question #1:  Which supplements have Copper ingredient?
     Example Cypher:
@@ -81,6 +83,10 @@ Use the following exapmle queries for normal cypher queries
     RETURN p.name AS name, p.description AS description, p.thumbnails as thumbnails
     LIMIT 10
     \`\`\`
+
+    When responding to the human give your response in markdown format. 
+    If your the question was about information of a supplement or a product always include thumbnails of the products in your markdown if available.
+
 
 Question:
 

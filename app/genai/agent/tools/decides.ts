@@ -21,6 +21,9 @@ export const decides = async (data: AgentState) => {
     Output: {output}
     Strictly follow the following formated instructions to answer:
     {format_instructions}
+
+    incase insturctions are not clear, respond with this format:
+    {{answer:"should be yes or no"}}
   `);
 
   const parser = StructuredOutputParser.fromZodSchema(
