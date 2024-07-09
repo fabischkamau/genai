@@ -23,7 +23,11 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ error: "Invalid question" });
   }
   const answer = await call(question, sessionId);
-  console.log(answer);
+  if (typeof answer === "string") {
+    return redirect(`/chat/${sessionId}`, {
+      status: 200,
+    });
+  }
   //  return { answer };
   return { sessionId };
 }
