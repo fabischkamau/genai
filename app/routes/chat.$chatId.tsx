@@ -73,7 +73,7 @@ export default function Index() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const actionData = useActionData<typeof action>();
-  const [errors, setError] = useState(actionData?.error);
+  const [errors, setError] = useState({ error: null });
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -81,12 +81,17 @@ export default function Index() {
     if (isSubmitting) {
       formRef.current?.reset();
     }
-  }, [isSubmitting]);
+    if (actionData?.error) {
+      setError({
+        error: actionData.error,
+      });
+    }
+  }, [isSubmitting, actionData]);
 
   return (
     <Layout>
       <div className="items-center justify-center mt-20 mx-10 lg:mx-36">
-        {errors &&
+        {errors?.error &&
           toast({
             title: "Uh oh! Something went wrong. Try Again!",
             description: "There was a problem with your request.",

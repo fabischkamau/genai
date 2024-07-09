@@ -50,9 +50,16 @@ export default function Index() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const actionData = useActionData<typeof action>();
-  const [errors, setError] = useState(actionData?.error);
+  const [errors, setError] = useState({ error: null });
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (actionData?.error) {
+      setError({
+        error: actionData.error,
+      });
+    }
+  }, [actionData]);
   return (
     <Layout>
       {isSubmitting ? (
@@ -61,7 +68,7 @@ export default function Index() {
         </div>
       ) : (
         <div className=" items-center justify-center mt-40 mx-10 lg:mx-40">
-          {errors &&
+          {errors?.error &&
             toast({
               title: "Uh oh! Something went wrong. Try Again!",
               description: "There was a problem with your request.",
