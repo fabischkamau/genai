@@ -1,10 +1,5 @@
-import {
-  AgentExecutor,
-  createOpenAIFunctionsAgent,
-  createOpenAIToolsAgent,
-} from "langchain/agents";
 import { END, START, StateGraph, StateGraphArgs } from "@langchain/langgraph";
-import { llm } from "./llm";
+
 import { AgentState } from "./agent/constants";
 import { rephraseQuestion } from "./agent/rephrase";
 import { router } from "./agent/router";
@@ -12,10 +7,14 @@ import {
   NODE_CYPHER_RETRIEVER,
   NODE_REPHRASE,
   NODE_PORDUCTS_SEARCH,
+  NODE_JOKE,
 } from "./agent/constants";
-import { initRetrievalChain } from "./agent/tools/products";
+import { initRetrievalChain, productsSearchTool } from "./agent/tools/products";
 import { cypherTool, initCypherQAChain } from "./agent/tools/cypher-retrevial";
 import { saveHistory } from "./agent/history";
+import { RunnableConfig } from "@langchain/core/runnables";
+import { tellJoke } from "./agent/tools/joke";
+import { decides } from "./agent/tools/decides";
 
 const agentState: StateGraphArgs<AgentState>["channels"] = {
   input: null,
@@ -49,10 +48,26 @@ export async function buildLangGraphAgent() {
     .addConditionalEdges(NODE_REPHRASE, router)
 
     // 3. Call Vector tool
-    .addNode(NODE_PORDUCTS_SEARCH, async (data: AgentState) => {
-      const output = await vectorChain.invoke({ message: data.input });
-      return { output };
-    })
+    .addNode(
+      NODE_PORDUCTS_SEARCH,
+      async (data: AgentState, config?: RunnableConfig) => {
+        const output = await productsSearchTool().invoke({
+          input: data.input,
+        });
+        const checkAnswer = await decides({
+          input: data.input,
+          output,
+          log: [""],
+          messages: [],
+          rephrased: "",
+        });
+        if (checkAnswer.answer === "no") {
+          const newoutput = tellJoke(data);
+          return newoutput;
+        }
+        return { output };
+      }
+    )
     .addEdge(NODE_PORDUCTS_SEARCH, END)
 
     // 4. Call CypherQAChain
@@ -60,10 +75,36 @@ export async function buildLangGraphAgent() {
       const output = await cypherTool().invoke({
         input: data.input,
       });
-
+      const checkAnswer = await decides({
+        input: data.input,
+        output,
+        log: [""],
+        messages: [],
+        rephrased: "",
+      });
+      if (checkAnswer.answer === "no") {
+        const output = await productsSearchTool().invoke({
+          input: data.input,
+        });
+        const checkAnswer = await decides({
+          input: data.input,
+          output,
+          log: [""],
+          messages: [],
+          rephrased: "",
+        });
+        if (checkAnswer.answer === "no") {
+          const newoutput = tellJoke(data);
+          return newoutput;
+        }
+        return { output };
+      }
       return { output: output as string };
     })
-    .addEdge(NODE_CYPHER_RETRIEVER, END);
+    .addEdge(NODE_CYPHER_RETRIEVER, END)
+    // 5. Tell a joke
+    .addNode(NODE_JOKE, tellJoke)
+    .addEdge(NODE_JOKE, END);
 
   const app = await graph.compile();
 
@@ -72,8 +113,9 @@ export async function buildLangGraphAgent() {
 
 export async function call(input: string, sessionId?: string) {
   const agent = await buildLangGraphAgent();
-  console.log(sessionId);
+
   const res = await agent.invoke({ input }, { configurable: { sessionId } });
-  
+  await saveHistory(sessionId as string, input, res.output);
+
   return res.output;
 }

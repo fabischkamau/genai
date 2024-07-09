@@ -12,3 +12,5 @@ export const NODE_REPHRASE = "rephrase";
 export const NODE_ROUTER = "router";
 export const NODE_PORDUCTS_SEARCH = "products_search";
 export const NODE_CYPHER_RETRIEVER = "cypher_retriever";
+export const NODE_JOKE = "joke";
+

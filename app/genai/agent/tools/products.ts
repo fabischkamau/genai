@@ -21,6 +21,7 @@ export async function initRetrievalChain() {
     openAIApiKey: process.env.OPEN_AI_API_KEY,
   });
 
+  console.log("Vector Retrevial");
   const store = await Neo4jVectorStore.fromExistingGraph(embeddings, {
     url: process.env.NEO4J_URI as string,
     username: process.env.NEO4J_USERNAME as string,

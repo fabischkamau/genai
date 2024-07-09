@@ -16,8 +16,6 @@ export const rephraseQuestion = async (
 ) => {
   const history = await getHistory(config?.configurable?.sessionId, 100);
 
-  console.log({ history });
-
   const rephrase = ChatPromptTemplate.fromMessages([
     SystemMessagePromptTemplate.fromTemplate(`
         Use the following conversation history to rephrase the input
@@ -41,7 +39,7 @@ export const rephraseQuestion = async (
   console.log({
     input: data.input,
     rephrased,
-    history
+    history,
   });
 
   return {
