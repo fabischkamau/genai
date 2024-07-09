@@ -73,7 +73,8 @@ Example Cypher Statements:
       LIMIT 10
     \`\`\`
 
-    Example Question #5: List some suppliments available.
+Use the following exapmle queries for normal cypher queries
+    Example Question #1: List some suppliments available.
     Example Cypher:
     \`\`\`
     MATCH (p:Suppliment:Product)

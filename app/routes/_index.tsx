@@ -12,7 +12,7 @@ import {
   useNavigation,
 } from "@remix-run/react";
 import { ChevronRight } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SkeletonCard } from "~/components/skeleton-card";
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
@@ -50,17 +50,8 @@ export default function Index() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const actionData = useActionData<typeof action>();
-  const {toast} = useToast();
-
-  useEffect(() => {
-    if (actionData?.error) {
-      () =>
-        toast({
-          title: "Uh oh! Something went wrong. Try Again!",
-          description: "There was a problem with your request.",
-        });
-    }
-  }, [actionData]);
+  const [errors, setError] = useState(actionData?.error);
+  const { toast } = useToast();
 
   return (
     <Layout>
@@ -70,6 +61,11 @@ export default function Index() {
         </div>
       ) : (
         <div className=" items-center justify-center mt-40 mx-10 lg:mx-40">
+          {errors &&
+            toast({
+              title: "Uh oh! Something went wrong. Try Again!",
+              description: "There was a problem with your request.",
+            })}
           <Form method="POST">
             <div className="relative">
               <Textarea

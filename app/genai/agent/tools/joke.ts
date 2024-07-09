@@ -11,9 +11,9 @@ export const tellJoke = async (data: AgentState) => {
     They said: {input}
     In the context of the conversation they mean: {rephrased}
 
-    Respond with a joke.
+    Respond with a general answer to the question and make sure the user understands you only answer to question the domain of Nutritional Supplements.
 
-    Start with "Your question is beyond the scope of my expertise. Here's a joke..."
+    Start with "I could'nt find any relevant information about the question. Please try again. "
   `);
   const llm = new ChatOpenAI();
 

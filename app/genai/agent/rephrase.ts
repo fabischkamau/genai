@@ -19,7 +19,7 @@ export const rephraseQuestion = async (
   const rephrase = ChatPromptTemplate.fromMessages([
     SystemMessagePromptTemplate.fromTemplate(`
         Use the following conversation history to rephrase the input
-        into a standalone question.
+        into a standalone question. Correct the grammar and spellings too.
       `),
     new MessagesPlaceholder("history"),
     HumanMessagePromptTemplate.fromTemplate(`Input: {input}`),
@@ -35,7 +35,7 @@ export const rephraseQuestion = async (
     history,
     input: data.input,
   });
-  
+
   console.log({
     input: data.input,
     rephrased,

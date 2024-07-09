@@ -13,7 +13,7 @@ import {
   useNavigation,
 } from "@remix-run/react";
 import { ChevronRight, Plus } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CollapsibleMessage } from "~/components/collapsible-message";
 import { SkeletonCard } from "~/components/skeleton-card";
 import { Button, buttonVariants } from "~/components/ui/button";
@@ -73,25 +73,24 @@ export default function Index() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const actionData = useActionData<typeof action>();
+  const [errors, setError] = useState(actionData?.error);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    if (actionData?.error) {
-      () =>
-        toast({
-          title: "Uh oh! Something went wrong. Try Again!",
-          description: "There was a problem with your request.",
-        });
-    }
     if (isSubmitting) {
       formRef.current?.reset();
     }
-  }, [actionData, isSubmitting]);
+  }, [isSubmitting]);
 
   return (
     <Layout>
       <div className="items-center justify-center mt-20 mx-10 lg:mx-36">
+        {errors &&
+          toast({
+            title: "Uh oh! Something went wrong. Try Again!",
+            description: "There was a problem with your request.",
+          })}
         {loaderData.chatmesssages?.map((message, index) => (
           <div key={index}>
             <h3 className="text-xl font-semibold text-foreground my-2">

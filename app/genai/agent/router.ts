@@ -16,7 +16,7 @@ export const router = async (data: AgentState, config?: RunnableConfig) => {
 
     Follow the rules below to come to your conclusion:
     * Do attempt to use your pre-trained knowledge to answer.
-    * If the question relates to Ingredients, Categories, Brand or General Supplement and can be answered by a database
+    * If the question relates to Ingredients, Categories, Brands or General Supplement or Products and can be answered by a database
     query, respond with "${NODE_CYPHER_RETRIEVER}".
     * If the question relates to the description of a supplement or product and can be answered with
     the contents of the supplements name or description, respond with "${NODE_PORDUCTS_SEARCH}".
