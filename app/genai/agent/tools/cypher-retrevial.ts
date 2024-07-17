@@ -4,6 +4,7 @@ import { z } from "zod";
 import { initGraph } from "../../graph";
 import { llm } from "../../llm";
 import { PromptTemplate } from "@langchain/core/prompts";
+import { formattedOutput } from "./formatedoutput";
 
 export async function initCypherQAChain() {
   const graph = await initGraph();
@@ -24,42 +25,40 @@ Do not include any text except the generated Cypher statement.
 Limit the maximum number of results to 10.
 Do not return embedding property.
 Include extra information about the nodes that may help an LLM provide a more informative answer, for example the release thumbnails, price, allergens or warnings.
-If your the question is about information of a supplement or a product always include thumbnails of the products in your answer.
-
 
 Fine Tuning:
 When perfoming string matching queries always  the following FULLTEXT SEARCH examples from the following indexes "${INDEXES}" to guide your answer:
 Example Cypher Statements:
- Example Question #1:  Which supplements have Copper ingredient?
+ Example Question #1 *Fetching a product based on a single ingredient *:  Which supplements have Copper ingredient?
     Example Cypher:
     \`\`\`
       CALL db.index.fulltext.queryNodes("namesAndDetails", "copper") YIELD node, score
-      MATCH (node)<-[:HAS_INGREDIENT]-(s)
-      WITH node.name AS ingredient, score,s 
-      RETURN ingredient, s.name AS name, s.description AS description, s.thumbnails as thumbnails,  score 
+      MATCH (node)<-[:HAS_INGREDIENT]-(s)-[:HAS_BRAND]->(b)
+      WITH  score,s ,b 
+      RETURN  s.name AS name, s.description AS description, s.thumbnails as thumbnails,  score , s.url as url, s.price as price, s.allergens as allergens, s.warnings as warnings, b.name as brand
       ORDER BY score DESC
       LIMIT 10
     \`\`\`
   
-    Example Question #2:  Which supplements have zinc and copper?
+    Example Question #2 *Fetching a product based on a multiple ingredients *:  Which supplements have zinc and copper?
     Example Cypher:
     \`\`\`
-    WITH ["zinc", "copper"] AS ingredients
-    MATCH (i:Ingredient)<-[:HAS_INGREDIENT]-(s)
+    WITH ["Zinc", "Copper"] AS ingredients
+    MATCH (i:Ingredient)<-[:HAS_INGREDIENT]-(s)-[:HAS_BRAND]->(b)
     WHERE ANY(ingredient IN ingredients WHERE i.name CONTAINS ingredient OR i.details CONTAINS ingredient)
-    WITH node.name AS ingredient, score,s 
-      RETURN ingredient, s.name AS name, s.description AS description, s.thumbnails as thumbnails,  score 
+    WITH  score,s ,b 
+      RETURN i s.name AS name, s.description AS description, s.thumbnails as thumbnails,  score , s.url as url, s.price as price, s.allergens as allergens, s.warnings as warnings, b.name as brand
       ORDER BY score DESC
       LIMIT 10
     \`\`\`
 
-  Example Question #3:  Which supplements are in the brand Natural Factors?
+  Example Question #3  :  Which supplements are in the brand Natural Factors?
     Example Cypher:
     \`\`\`
     CALL db.index.fulltext.queryNodes("brandNames", "Natural Factors") YIELD node,score
     MATCH (node)<-[:IN_BRAND]-(s)
-    WITH node.name AS ingredient, score,s 
-      RETURN ingredient, s.name AS name, s.description AS description, s.thumbnails as thumbnails,  score 
+    WITH  score,s 
+      RETURN  s.name AS name, s.description AS description, s.thumbnails as thumbnails,  score , s.url as url, s.price as price, s.allergens as allergens, s.warnings as warnings
       ORDER BY score DESC
       LIMIT 10
     \`\`\`
@@ -68,24 +67,19 @@ Example Cypher Statements:
     Example Cypher:
     \`\`\`
     CALL db.index.fulltext.queryNodes("categoryNames", "Vitamins") YIELD node,score
-    MATCH (node)<-[:IN_CATEGORY]-(s)
-    WITH node.name AS ingredient, score,s 
-      RETURN ingredient, s.name AS name, s.description AS description, s.thumbnails as thumbnails,  score 
-      ORDER BY score DESC
-      LIMIT 10
-    \`\`\`
-
-Use the following exapmle queries for normal cypher queries
+    MATCH (node)<-[:IN_CATEGORY]-(s)-[:HAS_BRAND]->(b)
+    WITH  score,s ,b
+      RETURN score, s.name AS name, s.description AS description, s.thumbnails as thumbnails,  score , s.url as url, s.price as price, s.allergens as allergens, s.warnings as warnings, b.name as brand
+      ORDER BY score DESCnpm
     Example Question #1: List some suppliments available.
     Example Cypher:
     \`\`\`
-    MATCH (p:Suppliment:Product)
-    RETURN p.name AS name, p.description AS description, p.thumbnails as thumbnails
+    MATCH (b)<-[:HAS_BRAND]-(p:Suppliment:Product)-[:HAS_INGREDIENT]->(i)
+    RETURN p.name AS name, p.description AS description, p.thumbnails as thumbnails, p.price as price, p.allergens as allergens, p.warnings as warnings, p.url as url, b.name as brand, i.name as ingredient 
+    ORDER BY p.name
     LIMIT 10
     \`\`\`
 
-    When responding to the human give your response in markdown format. 
-    If your the question was about information of a supplement or a product always include thumbnails of the products in your markdown if available.
 
 
 Question:
@@ -103,7 +97,7 @@ The question is:
     llm: llm,
     cypherPrompt,
     returnIntermediateSteps: true,
-    returnDirect: false,
+    returnDirect: true,
   });
   return chain;
 }
@@ -121,8 +115,18 @@ export function cypherTool() {
 
       const chain = await initCypherQAChain();
       const res = await chain.invoke({ query: input.input });
-      console.log(res);
-      return res.result as unknown as string;
+      const formatedOutput = await formattedOutput(
+        {
+          input: input.input,
+          output: res.result,
+          log: [],
+          messages: [],
+          rephrased: "",
+        },
+        res.result,
+        res.intermediateSteps[0]?.query
+      );
+      return formatedOutput;
     },
   });
 }

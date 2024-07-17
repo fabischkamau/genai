@@ -18,7 +18,16 @@ export const rephraseQuestion = async (
 
   const rephrase = ChatPromptTemplate.fromMessages([
     SystemMessagePromptTemplate.fromTemplate(`
-        Rephrase the input into a standalone question that can be answered with database query. Correct the grammar and spellings too.
+        Identify entities like ingredients, categories, brands and Rephrase the input into a standalone question that can be answered with cypher query.
+        Correct the grammar and spellings too.
+
+        Example Question #1: 
+        Question:
+        What are best protein suppliments?
+        And the rephrased answer is:
+        Which suppliments have protein ingredient?
+
+        * Returned the rephrased answer only
       `),
     HumanMessagePromptTemplate.fromTemplate(`Input: {input}`),
   ]);

@@ -26,7 +26,6 @@ export const CollapsibleMessage: React.FC<CollapsibleMessageProps> = ({
 
   useEffect(() => {
     setOpen(isLastMessage);
-    console.log(localStorage.getItem("sessionId"));
   }, [isCollapsed, isLastMessage]);
 
   return (

@@ -8,10 +8,5 @@ describe("Cypher Chain ", () => {
     });
     expect(response).toBeDefined();
     console.log(response);
-    await saveHistory(
-      "a86267e8-bf01-464f-9053-fa6964b8ff85",
-      "Find 2 supplements that help in testosterone",
-      response
-    );
   });
 });

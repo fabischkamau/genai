@@ -3,6 +3,8 @@ import rehypeExternalLinks from "rehype-external-links";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
+import rehypeStringfy from "rehype-stringify";
 import "katex/dist/katex.min.css";
 
 export function BotMessage({ content }: { content: string }) {
@@ -20,6 +22,8 @@ export function BotMessage({ content }: { content: string }) {
         rehypePlugins={[
           [rehypeExternalLinks, { target: "_blank" }],
           rehypeKatex,
+          rehypeRaw,
+          rehypeStringfy,
         ]}
         remarkPlugins={[remarkGfm, remarkMath]}
         className="prose-sm prose-neutral prose-a:text-accent-foreground/50"
@@ -31,9 +35,13 @@ export function BotMessage({ content }: { content: string }) {
 
   return (
     <MemoizedReactMarkdown
-      rehypePlugins={[[rehypeExternalLinks, { target: "_blank" }]]}
+      rehypePlugins={[
+        [rehypeExternalLinks, { target: "_blank" }],
+        rehypeStringfy,
+        rehypeRaw,
+      ]}
       remarkPlugins={[remarkGfm]}
-      className="prose-sm prose-neutral prose-a:text-accent-foreground/50"
+      className="prose-sm prose-neutral prose-a:text-accent-foreground/50 hover:prose-a:text-blue-600"
     >
       {content}
     </MemoizedReactMarkdown>

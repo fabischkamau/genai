@@ -20,7 +20,7 @@ export const router = async (data: AgentState, config?: RunnableConfig) => {
     query, respond with "${NODE_CYPHER_RETRIEVER}".
     * If the question relates to the description of a supplement or product and can be answered with
     the contents of the supplements name or description, respond with "${NODE_PORDUCTS_SEARCH}".
-    * For all other queries, respond with "${NODE_JOKE}".
+    * For all other queries, respond with that does not mention suppliments or categories or brands or ingredients "${NODE_JOKE}".
 
 
     Question: {question}

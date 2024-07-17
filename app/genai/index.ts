@@ -99,6 +99,7 @@ export async function buildLangGraphAgent() {
           messages: [],
           rephrased: "",
         });
+        console.log({ checkAnswer });
         if (checkAnswer.answer === NOT_ANSWERED) {
           console.log("Choosing Joke Tool");
           const newoutput = tellJoke(data);

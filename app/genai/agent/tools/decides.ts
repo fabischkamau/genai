@@ -12,8 +12,11 @@ export const decides = async (data: AgentState) => {
 
     Follow the rules below to come to your conclusion:
     * Do attempt to use your pre-trained knowledge to answer.
-    * If the  the output answers the original question respond with "${ANSWERED}".
-    * If the  the output does not answer the original question respond with "${NOT_ANSWERED}".
+    * Expect the output to be markdown containing answers to the original question.
+    * Do not include any explanations in your answer.
+    * Strictly follow the format listed below to provide you answer.
+    * If the  the output contains answers to the original question respond with "${ANSWERED}".
+    * If the  the output does not contain answers to the original question respond with "${NOT_ANSWERED}".
 
 
     Question: {question}
@@ -33,7 +36,7 @@ export const decides = async (data: AgentState) => {
   );
 
   const chain = prompt.pipe(llm).pipe(parser);
-
+  console.log("Output:", data.output);
   return chain.invoke({
     question: data.input,
     output: data.output,
