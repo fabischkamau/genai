@@ -153,6 +153,7 @@ export default function Index() {
               variant="link"
               ref={submitRef}
               className="absolute w-8 h-8  right-2 top-1/2 -translate-y-1/2"
+              disabled={isSubmitting}
             >
               <ChevronRight className="w-6 h-6 text-muted-foreground" />
               <span className="sr-only">Send</span>

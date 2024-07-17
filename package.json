@@ -37,6 +37,7 @@
     "dotenv": "^16.4.5",
     "isbot": "^4.1.0",
     "katex": "^0.16.11",
+    "langchain": "^0.2.10",
     "lucide-react": "^0.400.0",
     "moment": "^2.30.1",
     "neo4j-driver": "^5.22.0",

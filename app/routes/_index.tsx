@@ -31,7 +31,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("userId");
   let user = null;
-  if (userId) {
+  if (typeof userId === "string") {
     user = await getUser(userId);
   }
   let messageHistory = null;
@@ -55,13 +55,17 @@ export async function action({ request }: ActionFunctionArgs) {
   if (typeof question !== "string") {
     return json({ error: "Invalid question" });
   }
-  return await call(question, sessionId)
-    .then((answer) => {
-      return redirect(`/chat/${sessionId}`);
-    })
-    .catch((error) => {
-      return { error: error };
-    });
+  let answer = null;
+  try {
+    answer = await call(question, sessionId);
+  } catch (error) {
+    return json({ error: error });
+  }
+
+  if (typeof answer === "string") {
+    return redirect(`/chat/${sessionId}`);
+  }
+  return {};
 }
 
 export const meta: MetaFunction = () => {
@@ -137,6 +141,7 @@ export default function Index() {
                 variant="link"
                 ref={submitRef}
                 className="absolute w-8 h-8  right-2 top-1/2 -translate-y-1/2"
+                disabled={isSubmitting}
               >
                 <ChevronRight className="w-6 h-6 text-muted-foreground" />
                 <span className="sr-only">Send</span>

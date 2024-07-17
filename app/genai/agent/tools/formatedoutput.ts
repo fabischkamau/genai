@@ -12,7 +12,7 @@ export const formattedOutput = async (
   const template = `
   
 
-## Here are some supplements that contain copper ingredient:
+## Here are some supplements for you: *update this part to fit the question*
 
 ### HMB for Lean Muscle Support - 1,000 MG (90 Tablets)
 
@@ -57,7 +57,8 @@ These products offer different benefits to support your health and wellness goal
   const prompt = PromptTemplate.fromTemplate(`
     You are a helpful assistant helping users with queries about the Nutritionals Supplements.
     Answer the user's question to the best of your ability.
-    Format you answer based on the provided example template. 
+    You are to format  your answer based on the provided example template. 
+    Update the template to fit the question asked.
     
     You are provided with user question, a context which are cypher query results and the cypher query itself.
     Use the provided context to generate your answer. The cypher query is supposed to give you extra information about the product and how it was obtained.
