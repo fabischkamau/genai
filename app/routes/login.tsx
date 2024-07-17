@@ -1,5 +1,5 @@
 import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { useGoogleLogin } from "@react-oauth/google";
 import Layout from "~/layout";
 import axios from "axios";
@@ -50,7 +50,6 @@ export default function login() {
   const fetcher = useFetcher();
   const isSubmitting = fetcher.state === "submitting";
   const [error, setError] = useState<boolean>(false);
-  const { toast } = useToast();
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
@@ -81,6 +80,11 @@ export default function login() {
         <Card className="w-96">
           <CardHeader>
             <CardTitle className="text-2xl">Login</CardTitle>
+            <CardDescription>
+              {
+                error && <p className="text-red-500 text-sm">Oops! Something went wrong. Try again.</p>
+              }
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Button
@@ -99,11 +103,7 @@ export default function login() {
             </Button>
           </CardContent>
         </Card>
-        {errors?.error &&
-          toast({
-            title: "Uh oh! Something went wrong. Try Again!",
-            description: "There was a problem with your request.",
-          })}
+
       </div>
     </Layout>
   );
