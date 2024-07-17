@@ -8,6 +8,8 @@ import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { createUser } from "~/utils/historysession.server";
 import { commitSession, getSession } from "~/utils/authsession.server";
 import { LoaderCircle } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "~/components/ui/use-toast";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -30,7 +32,7 @@ export async function action({ request }: ActionFunctionArgs) {
     return json({ error: "Name is required" }, { status: 400 });
   }
 
-  return await createUser(email, name, avatar as string )
+  return await createUser(email, name, avatar as string)
     .then(async (email) => {
       session.set("userId", email);
       return redirect("/", {
@@ -47,6 +49,8 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function login() {
   const fetcher = useFetcher();
   const isSubmitting = fetcher.state === "submitting";
+  const [error, setError] = useState<boolean>(false);
+  const { toast } = useToast();
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
@@ -67,7 +71,7 @@ export default function login() {
 
         fetcher.submit(formData, { method: "POST" });
       } catch (error) {
-        console.log(error);
+        setError(true);
       }
     },
   });
@@ -95,6 +99,11 @@ export default function login() {
             </Button>
           </CardContent>
         </Card>
+        {errors?.error &&
+          toast({
+            title: "Uh oh! Something went wrong. Try Again!",
+            description: "There was a problem with your request.",
+          })}
       </div>
     </Layout>
   );

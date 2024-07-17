@@ -1,6 +1,7 @@
 import { User } from "~/components/dropdown-menu";
 import { HistoryPanel } from "~/components/historypanel";
 import Navbar from "~/components/navbar";
+import { Toaster } from "~/components/ui/toaster";
 
 export default function Layout({
   userId,
@@ -20,6 +21,7 @@ export default function Layout({
         <HistoryPanel messageHistory={messageHistory} />
       )}
       {children}
+      <Toaster />
     </div>
   );
 }

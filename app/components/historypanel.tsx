@@ -9,11 +9,8 @@ import {
 import { ChevronRight, History, SkipForward } from "lucide-react";
 import { Link } from "@remix-run/react";
 
-import { DateTime } from "neo4j-driver";
-
 import moment from "moment";
 export function HistoryPanel({ messageHistory }: { messageHistory: any }) {
-  console.log(messageHistory);
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -37,7 +34,9 @@ export function HistoryPanel({ messageHistory }: { messageHistory: any }) {
                 </div>
                 <div>
                   <div>
-                    <p className="text-foreground text-sm line-clamp-1">{message?.input}</p>
+                    <p className="text-foreground text-sm line-clamp-1">
+                      {message?.input}
+                    </p>
                   </div>
                   <div>
                     <p className="text-muted-foreground text-sm">

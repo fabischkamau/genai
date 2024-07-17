@@ -7,7 +7,7 @@ import {
 
 } from "@remix-run/react";
 import "./tailwind.css";
-import { Toaster } from "./components/ui/toaster";
+
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -24,7 +24,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </head>
         <body>
           {children}
-          <Toaster />
+         
           <ScrollRestoration />
           <Scripts />
         </body>
