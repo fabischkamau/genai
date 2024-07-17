@@ -14,7 +14,7 @@ export const formattedOutput = async (
 
 ## Here are some supplements for you: *update this part to fit the question*
 
-### HMB for Lean Muscle Support - 1,000 MG (90 Tablets)
+#### HMB for Lean Muscle Support - 1,000 MG (90 Tablets)
 
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
   <img src="https://s7media.vitaminshoppe.com/is/image/VitaminShoppe/2247724_01?$OP_PLP$" alt="HMB Image 1" style="width: 30%; max-width: 200px;">
@@ -32,7 +32,7 @@ export const formattedOutput = async (
 
 [View Details](https://www.vitaminshoppe.com/p/resveratrol-1000-mg-60-veggie-capsules/4r-1079)
 
-### One Daily Men's Sport Multivitamin (60 Tablets)
+#### One Daily Men's Sport Multivitamin (60 Tablets)
 
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
   <img src="https://s7media.vitaminshoppe.com/is/image/VitaminShoppe/2247724_01?$OP_PLP$" alt="Men's Sport Multivitamin Image 1" style="width: 30%; max-width: 200px; height: 150px;">
@@ -57,7 +57,7 @@ These products offer different benefits to support your health and wellness goal
   const prompt = PromptTemplate.fromTemplate(`
     You are a helpful assistant helping users with queries about the Nutritionals Supplements.
     Answer the user's question to the best of your ability.
-    You are to format  your answer based on the provided example template. 
+    You are to format  your answer based on the provided template. 
     Update the template to fit the question asked.
     
     You are provided with user question, a context which are cypher query results and the cypher query itself.
@@ -69,7 +69,7 @@ These products offer different benefits to support your health and wellness goal
     don't try to make up an answer, do not fall back to your internal knowledge.
     If no context is provided you may also ask for clarification.
 
-    You are to format your answer based on the provided example template. 
+    You are to format your answer based on the provided  template. 
 
     Template:
     {template}

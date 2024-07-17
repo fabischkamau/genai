@@ -20,7 +20,7 @@ const template = `
 
 ## Here are some supplements that contain copper ingredient:
 
-### HMB for Lean Muscle Support - 1,000 MG (90 Tablets)
+#### HMB for Lean Muscle Support - 1,000 MG (90 Tablets)
 
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
   <img src="https://s7media.vitaminshoppe.com/is/image/VitaminShoppe/2247724_01?$OP_PLP$" alt="HMB Image 1" style="width: 30%; max-width: 200px;">
@@ -38,7 +38,7 @@ const template = `
 
 [View Details](https://www.vitaminshoppe.com/p/resveratrol-1000-mg-60-veggie-capsules/4r-1079)
 
-### One Daily Men's Sport Multivitamin (60 Tablets)
+#### One Daily Men's Sport Multivitamin (60 Tablets)
 
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
   <img src="https://s7media.vitaminshoppe.com/is/image/VitaminShoppe/2247724_01?$OP_PLP$" alt="Men's Sport Multivitamin Image 1" style="width: 30%; max-width: 200px; height: 150px;">
